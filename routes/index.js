@@ -8,18 +8,23 @@
 
 exports.index = function(req, res){
 	var body = cache.get('tfl');
+	res.header('Content-Type', 'text/xml');
 	if(!body) {
+		body = "";
 		http.get("http://cloud.tfl.gov.uk/TrackerNet/LineStatus", function(response) {
 			response.on('data', function (chunk) {
-		    	body = chunk;
-		    	cache.put('tfl', chunk, 1000);
-				res.send(body);
+				if(chunk.length >0 ) body += chunk;
+
+			}).on('end', function() {
+				console.log("transfer ended", body);
+			    cache.put('tfl', body, 1000);
+				res.end(body.toString("utf8"));			
 			});	
 		}).on('error', function(e) {
 			console.log("Got error: " + e.message);
 		});
 	} else {
-		res.send(body);
+		res.send(body.toString("utf8"));
 	}
 
 };
