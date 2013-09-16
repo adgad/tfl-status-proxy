@@ -9,9 +9,10 @@
 
 exports.index = function(req, res){
 	var body = cache.get('tfl');
+	var parser = new xml2js.Parser();
+
 	res.header('Content-Type', 'application/json');
 	res.header('Cache-Control', 'public, max-age=60');
-	var parser = new xml2js.Parser();
 
 	if(!body) {
 		body = "";
@@ -20,15 +21,14 @@ exports.index = function(req, res){
 				if(chunk.length >0 ) body += chunk;
 
 			}).on('end', function() {
-				var output = [];
+				var output = {};
 				parser.parseString(body.replace("\ufeff", ""), function (err, result) {
 			       	var statii = result['ArrayOfLineStatus']['LineStatus'], i;
 			       	for(i in statii) {
-			       		output.push(
-			       			{"name": statii[i]["Line"][0]["$"]["Name"],
+			       		output[statii[i]["Line"][0]["$"]["Name"]] = {
 		       				 "status":statii[i]["Status"][0]["$"]["CssClass"],
 		       				 "status_details":statii[i]["$"]["StatusDetails"]
-			       			});
+			       		};	
 			       	}
 				    cache.put('tfl', output, 60000);
 					res.end(JSON.stringify(output));	
