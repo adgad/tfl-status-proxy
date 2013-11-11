@@ -38,7 +38,7 @@ exports.index = function(req, res){
 			console.log("Got error: " + e.message);
 		});
 	} else {
-		res.send(body.toString("utf8"));
+		res.send(JSON.stringify(body));
 	}
 
 };
