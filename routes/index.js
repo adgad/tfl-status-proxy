@@ -26,7 +26,7 @@ exports.index = function(req, res){
 			       	var statii = result['ArrayOfLineStatus']['LineStatus'], i;
 			       	for(i in statii) {
 			       		output[statii[i]["Line"][0]["$"]["Name"]] = {
-		       				 "status":statii[i]["Status"][0]["$"]["CssClass"],
+		       				 "status":statii[i]["Status"][0]["$"]["Description"],
 		       				 "status_details":statii[i]["$"]["StatusDetails"]
 			       		};	
 			       	}
